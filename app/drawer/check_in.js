@@ -4,7 +4,9 @@ import { Button, Card } from 'react-native-paper';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import AsyncStorage from '@react-native-community/async-storage';
 import {Appbar } from 'react-native-paper';
-
+import global from '../src/global';
+import { StackActions, NavigationActions } from 'react-navigation';
+import {useNavigation} from '@react-navigation/native';
 function CheckIn({navigation}){
     const [userToken, setUserToken] = useState(null);
     const [hasPermission,setHasPermission]=useState(null);
@@ -12,14 +14,15 @@ function CheckIn({navigation}){
     const[text,setText]=useState('');
     const[storeId,setStoreId]=useState(null);
     const[storeName,setStoreName]=useState(null);
-    const toHome = () => navigation.navigate('Menu');
+    const toHome = () => navigation.goBack();
     const checkIn =()=>{
       submitAPI();
       navigation.navigate('StoreView')};
     
+    
     async function submitAPI(data) {
       try{
-          await fetch('http://192.168.0.111:8000/api/store/search/'+data,{
+          await fetch(global.ip+'/api/store/search/'+data,{
           method:'GET',
           headers:{
             'Accept':'application/json',
@@ -43,20 +46,16 @@ function CheckIn({navigation}){
       }catch(e){
         console.log(e);
       }
-
-      
     }
 
     saveStore = async() =>{
-      if(storeName !== null && storeName !== 'undefined'){ 
         try{
           await AsyncStorage.setItem('storeName',storeName);
           await AsyncStorage.setItem('storeId',storeId);
-          console.log('Saved');
         }catch(e){
           console.log(e);
         }
-      }
+    
     }
 
     getToken= async() =>{
@@ -134,9 +133,10 @@ function CheckIn({navigation}){
         </View>
         <Text style={styles.subtext}>Please scan again if the store name didn't appear !</Text>
         
-  
-        {scanned && <Button style={styles.buttons} mode="contained" onPress={()=>setScanned(false)} color='#1e3d59'>Scan again?</Button>}
-        {scanned && <Button style={styles.buttons} mode="contained" onPress={checkIn} color='#1e3d59'>CHECK IN</Button>}
+        <View style={styles.buttonCon}>
+          {scanned && <Button style={styles.buttons} mode="contained" onPress={()=>setScanned(false)} color='#1e3d59'>Scan again?</Button>}
+          {scanned && <Button style={styles.buttons} mode="contained" onPress={checkIn} color='#32CD32'>CHECK IN</Button>}
+        </View>
       </View>
       </View>
     );
@@ -191,5 +191,12 @@ const styles = StyleSheet.create({
     },
     buttons:{
       marginBottom:10
-    }
+    },
+    buttonsG:{
+      marginBottom:10,
+      color:'lime'
+    },
+    buttonCon:{
+      margin:15,
+    },
   });

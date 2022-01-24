@@ -79,6 +79,7 @@ const App =() => {
           <Drawer.Screen name="Profile" component={Profile} />
           <Drawer.Screen name="History" component={History} />
           <Drawer.Screen name="About" component={About} />
+          <Drawer.Screen name="Logout" component={About} />
        </Drawer.Navigator> 
        </Provider>
         : <Navigator/>

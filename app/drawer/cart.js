@@ -1,13 +1,12 @@
 import React,{useState, useEffect} from 'react';
 import { StyleSheet, Text, View, FlatList, Image, TouchableHighlight } from 'react-native';
-import { Button, TextInput, Appbar,Card, TouchableRipple } from 'react-native-paper';
-import { List,IconButton } from 'react-native-paper';
+import { Button, TextInput, Appbar,Card, TouchableRipple,List,IconButton } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import {connect} from 'react-redux';
 import {addItem, deleteItem, updateItem} from "./actions/item";
 
 function Cart({navigation}){
-    const toHome = () => navigation.navigate('Scan');
+    const toHome = () => navigation.goBack();
     const [price,setPrice]=useState(0);
     const [quantity,setQuantity]=useState(0);
     let totalPrice = 0;
@@ -18,8 +17,9 @@ function Cart({navigation}){
     
     function cartInfoUpdate() {
         items.forEach((item) => {
+          let p = parseFloat(item.price);
           totalQuantity += 1;
-          totalPrice +=item.price;
+          totalPrice = totalPrice+p;
           setPrice(totalPrice);
           setQuantity(totalQuantity);
         })
@@ -30,16 +30,6 @@ function Cart({navigation}){
         setQuantity(quantity-1);
         setPrice(price-priceD);
     }
-
-    // function addQuantity(key,priceA){
-    //     setQuantity(quantity+1);
-    //     setPrice(price+priceA);
-    // }
-
-    // function subQuantity(key,priceS){
-    //     setQuantity(quantity-1);
-    //     setPrice(price-priceA);
-    // }
 
     useEffect(() => {
         cartInfoUpdate();
@@ -53,8 +43,8 @@ function Cart({navigation}){
                 </Appbar.Header>
 
                 <View style={styles.cartInfo}>
-                    <Text>Total Price: RM {price}</Text>
-                    <Text>Item In Cart: {quantity}</Text>
+                    <Text>Total Price: RM {price.toFixed(2)}</Text>
+                    <Text>Item(s) In Cart: {quantity}</Text>
                 </View>
                 <FlatList style={styles.listContainer}
                 data={items}
@@ -68,14 +58,14 @@ function Cart({navigation}){
                         </View>
 
                         <View style={styles.actionButtonCon}>
-                            {/* <IconButton icon="plus" onPress={() =>addQuantity(data.item.key,data.item.quantity,data.item.price)}/>
-                            <Text style={styles.textStyle}>{data.item.quantity}</Text>
-                            <IconButton icon="minus" /> */}
                             <IconButton icon="delete" onPress={() =>deleteAction(data.item.key,data.item.quantity,data.item.price) }/>
                         </View>
                    </View>
                 }
                 />
+                <Button style={styles.social_btn} icon="credit-card-outline" mode="contained" color='#1e3d59' onPress={() =>navigation.navigate('Payment',{price: price})}>
+                    pay now
+                </Button>
         </View>
     );
 }
@@ -104,7 +94,7 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         backgroundColor: 'white',
-        padding: 16
+        padding: 5
     },
     listText: {
         fontSize: 30,
@@ -112,7 +102,7 @@ const styles = StyleSheet.create({
         
     },
     cartInfo:{
-        padding:10
+        padding:15
     },
     itemContainer:{
         flexDirection:'row',
@@ -123,7 +113,7 @@ const styles = StyleSheet.create({
     },
     actionButtonCon:{
         flex:1,
-        marginStart:150,
+        marginStart:100,
         justifyContent:'center',
         padding:10,
         alignItems:'stretch',

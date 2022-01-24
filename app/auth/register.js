@@ -1,7 +1,7 @@
 import React,{useState} from 'react';
 import {View, Text, StyleSheet, Image, Dimensions, TouchableHighlight, ScrollView} from 'react-native';
 import { Button, TextInput  } from 'react-native-paper';
-
+import global from '../src/global';
 
 function Register(){
   const submit = () => submitAPI();
@@ -24,7 +24,7 @@ function Register(){
   
   async function submitAPI() {
     try{
-        await fetch('http://192.168.0.111:8000/api/register',{
+        await fetch(global.ip+'/api/register',{
         method:'POST',
         headers:{
           'Accept':'application/json',

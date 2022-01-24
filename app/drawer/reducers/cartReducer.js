@@ -13,7 +13,7 @@ const cartReducer = (state = initialState, action)=>{
                     key: Math.random(),
                     name:action.data,
                     code:action.code,
-                    price:action.price,
+                    price:action.price
                 })
             };
         case DELETE_ITEM:

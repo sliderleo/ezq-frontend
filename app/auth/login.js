@@ -3,6 +3,7 @@ import {View, Text, StyleSheet, Image, Dimensions, TouchableHighlight} from 'rea
 import { Button, TextInput  } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
 import AsyncStorage from '@react-native-community/async-storage';
+import global from '../src/global';
 
 const { width, height } = Dimensions.get('window');
 
@@ -37,7 +38,7 @@ const onPress =() =>{loginAPI()}
 
 async function loginAPI() {
   try{
-      await fetch('http://192.168.0.111:8000/api/login',{
+      await fetch(global.ip+'/api/login',{
       method:'POST',
       headers:{
         'Accept':'application/json',
@@ -51,7 +52,7 @@ async function loginAPI() {
       }else{
         console.log(resData);
         setToken(resData.token);
-        setId(resData.user.id);
+        setId(JSON.stringify(resData.user.id));
       }
     })
     .catch((error) => {
@@ -61,15 +62,16 @@ async function loginAPI() {
     console.log(e);
   }
 
-  if(token !== null){ 
-    try{
-      await AsyncStorage.setItem('token',token);
-      await AsyncStorage.setItem('id',id);
-      console.log('Saved');
-    }catch(e){
-      console.log(e);
-    }
+  try{
+    await AsyncStorage.removeItem('token');
+    await AsyncStorage.removeItem('id');
+    await AsyncStorage.setItem('token',token);
+    await AsyncStorage.setItem('id',id);
+    navigation.navigate("Menu");
+  }catch(e){
+    console.log(e);
   }
+  
 }
 
     return(
